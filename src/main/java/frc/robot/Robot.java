@@ -4,7 +4,11 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -17,10 +21,14 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
 
+  TalonSRX coralMotor;
   Drivetrain drive;
+  XboxController xbox;
   
   public Robot() {
     drive = new Drivetrain();
+    xbox = new XboxController(0);
+    coralMotor = new TalonSRX(13);
   }
 
   @Override
@@ -36,7 +44,15 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    drive.driveArcade(xbox.getLeftY(), xbox.getRightX());
+
+    if (xbox.getAButton()) {
+      coralMotor.set(ControlMode.PercentOutput, 0.5);
+    } else {
+      coralMotor.set(ControlMode.PercentOutput, 0);
+    }
+  }
 
   @Override
   public void disabledInit() {}
