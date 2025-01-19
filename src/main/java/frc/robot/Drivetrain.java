@@ -18,10 +18,10 @@ public class Drivetrain {
 
     public Drivetrain(){
 
-        leftA = new SparkMax(0, MotorType.kBrushless);
-        leftB = new SparkMax(1, MotorType.kBrushless);
+        leftA = new SparkMax(4, MotorType.kBrushless);
+        leftB = new SparkMax(3, MotorType.kBrushless);
         rightA = new SparkMax(2, MotorType.kBrushless);
-        rightB = new SparkMax(3, MotorType.kBrushless);
+        rightB = new SparkMax(1, MotorType.kBrushless);
 
         
         SparkMaxConfig globalConfig = new SparkMaxConfig();
