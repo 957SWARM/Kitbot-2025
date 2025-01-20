@@ -10,6 +10,7 @@ import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SPI.Port;
 
@@ -30,12 +31,17 @@ public class Robot extends TimedRobot {
 
   int autoStep = 0;
 
+  Timer time;
+
   AHRS navx = new AHRS(NavXComType.kMXP_SPI);
+
+  String autoMode = "Center";
   
   public Robot() {
     drive = new Drivetrain();
     xbox = new XboxController(0);
     coralMotor = new TalonSRX(13);
+    time = new Timer();
   }
 
   @Override
@@ -51,46 +57,27 @@ public class Robot extends TimedRobot {
     drive.resetEncoders();
     autoStep = 0;
     navx.reset();
+    coralMotor.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
   public void autonomousPeriodic() {
-    
-    switch(autoStep) {
 
-      // Drive x feet, with angle adjustment
-      case 0:
+    switch(autoMode){
 
-        double speed = 0.5;
+      case "Center":
+        centerAuto();
+        break;
 
-        double turn = 0;
-
-        if(navx.getAngle() > 0.5) {
-          turn = -0.11;
-        } else if(navx.getAngle() < -0.5) {
-          turn = 0.11;
-        }
-
-        drive.driveArcade(-speed, turn);
-
-        if(drive.getPosition() > 6)
-          autoStep = 1;
+      case "Right":
 
         break;
 
-      // Slow down, wait until velocity is 0
-      case 1:
-        drive.driveArcade(0, 0);
+      case "Left":
+        leftAuto();
         break;
 
-      // Stop and Score for 2 seconds
-      case 2:
-
-        break;
-
-      // Stop all operation
       default:
-
         break;
 
     }
@@ -134,4 +121,162 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {}
+
+  public void centerAuto() {
+    double speed = 0;
+
+    double turn = 0;
+    
+    switch(autoStep) {
+
+      // Drive x feet, with angle adjustment
+      case 0:
+
+        speed = 0.5;
+
+        turn = 0;
+
+        if(navx.getAngle() > 0.5) {
+          turn = -0.11;
+        } else if(navx.getAngle() < -0.5) {
+          turn = 0.11;
+        }
+
+        drive.driveArcade(-speed, turn);
+
+        if(drive.getPosition() > 4)
+          autoStep = 1;
+
+        break;
+
+      // Slow down, wait until velocity is 0
+      case 1:
+        speed = 0.35;
+
+        drive.driveArcade(-speed, 0);
+        
+        if(Math.abs(drive.getVelocity()) < 0.05){
+          time.restart();
+          autoStep = 2;
+        }
+          
+       
+        break;
+
+      // Stop and Score for 2 seconds
+      case 2:
+        drive.driveArcade(0, 0);
+        coralMotor.set(ControlMode.PercentOutput, -0.4);
+
+        if(time.get() > 2)
+          autoStep = 4;
+
+        break;
+
+      // Stop all operation
+      default:
+        drive.driveArcade(0, 0);
+        coralMotor.set(ControlMode.PercentOutput, 0);
+        break;
+
+    }
+  }
+
+  public void leftAuto(){
+      double speed = 0;
+  
+      double turn = 0;
+      
+      switch(autoStep) {
+  
+        // Drive x feet, with angle adjustment
+        case 0:
+  
+          speed = 0.5;
+  
+          turn = 0;
+  
+          if(navx.getAngle() > 0.5) {
+            turn = -0.11;
+          } else if(navx.getAngle() < -0.5) {
+            turn = 0.11;
+          }
+  
+          drive.driveArcade(-speed, turn);
+  
+          if(drive.getPosition() > 5)
+            autoStep = 1;
+  
+          break;
+  
+        // Stop, turn 45 degrees right
+        case 1:
+          speed = 0;
+
+          turn = 0.5;
+  
+          drive.driveArcade(0, 0.5);
+      
+          
+          if(Math.abs(navx.getAngle()) > 40){
+            drive.driveArcade(0, 0);
+            drive.resetEncoders();
+            autoStep = 2;
+          }
+            
+         
+          break;
+  
+        // Move forward 4, stop
+        case 2:
+          speed = 0.5;
+    
+          turn = 0;
+
+          if(navx.getAngle() > 45.5) {
+            turn = -0.11;
+          } else if(navx.getAngle() < 44.5) {
+            turn = 0.11;
+          }
+
+          drive.driveArcade(-speed, turn);
+
+          if(drive.getPosition() > 4)
+            autoStep = 3;
+
+          break;
+          
+        case 3:
+          speed = 0.35;
+
+          drive.driveArcade(-speed, 0);
+          
+          if(Math.abs(drive.getVelocity()) < 0.05){
+            time.restart();
+            autoStep = 4;
+          }
+            
+        
+          break;
+
+        // Stop and Score for 2 seconds
+        case 4:
+          drive.driveArcade(0, 0);
+          coralMotor.set(ControlMode.PercentOutput, -0.4);
+
+          if(time.get() > 2)
+            autoStep = 5;
+
+          break;
+          
+        // Stop all operation
+        default:
+          drive.driveArcade(0, 0);
+          coralMotor.set(ControlMode.PercentOutput, 0);
+          break;
+  
+      }
+    }
+
+  
 }

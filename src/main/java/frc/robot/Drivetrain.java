@@ -92,6 +92,13 @@ public class Drivetrain {
         return ( ( leftPosition + rightPosition ) / 2 ) / 4.36;
     }
 
+    public double getVelocity(){
+        double leftVelocity = -leftEncoder.getVelocity();
+        double rightVelocity = -rightEncoder.getVelocity();
+
+        return ( ( leftVelocity + rightVelocity ) / 2 ) / 4.36;
+    }
+
     public void driveArcade(double xSpeed, double zRotation) {
 
         if(Math.abs(xSpeed) < 0.1) 
@@ -101,4 +108,5 @@ public class Drivetrain {
 
         drive.arcadeDrive(xSpeed, zRotation);
     }
+
 }
