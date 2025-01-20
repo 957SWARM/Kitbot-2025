@@ -70,11 +70,11 @@ public class Robot extends TimedRobot {
         break;
 
       case "Right":
-
+      sideAuto(-45);
         break;
 
       case "Left":
-        leftAuto();
+        sideAuto(45);
         break;
 
       default:
@@ -182,7 +182,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  public void leftAuto(){
+  public void sideAuto(double angle){
       double speed = 0;
   
       double turn = 0;
@@ -209,7 +209,7 @@ public class Robot extends TimedRobot {
   
           break;
   
-        // Stop, turn 45 degrees right
+        // Stop, turn x degrees right
         case 1:
           speed = 0;
 
@@ -218,7 +218,7 @@ public class Robot extends TimedRobot {
           drive.driveArcade(0, 0.5);
       
           
-          if(Math.abs(navx.getAngle()) > 40){
+          if(Math.abs(navx.getAngle()) > angle){
             drive.driveArcade(0, 0);
             drive.resetEncoders();
             autoStep = 2;
@@ -233,9 +233,9 @@ public class Robot extends TimedRobot {
     
           turn = 0;
 
-          if(navx.getAngle() > 45.5) {
+          if(navx.getAngle() > angle + .5) {
             turn = -0.11;
-          } else if(navx.getAngle() < 44.5) {
+          } else if(navx.getAngle() < angle -.5) {
             turn = 0.11;
           }
 
