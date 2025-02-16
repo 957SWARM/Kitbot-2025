@@ -91,15 +91,15 @@ public class Robot extends TimedRobot {
     switch(autoMode){
 
       case "Center":
-        centerAuto();
+        // centerAuto();
         break;
 
       case "Right":
-        sideAuto(-45);
+        // sideAuto(-45);
         break;
 
       case "Left":
-        sideAuto(45);
+        // sideAuto(45);
         break;
 
       default:
