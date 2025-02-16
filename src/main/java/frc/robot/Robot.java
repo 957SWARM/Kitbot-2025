@@ -14,6 +14,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.SPI.Port;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
  * the TimedRobot documentation. If you change the name of this class or the package after creating
@@ -28,6 +33,11 @@ public class Robot extends TimedRobot {
   TalonSRX coralMotor;
   Drivetrain drive;
   XboxController xbox;
+
+  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+  NetworkTableEntry tx = table.getEntry("tx");
+  NetworkTableEntry ty = table.getEntry("ty");
+  NetworkTableEntry ta = table.getEntry("ta");
 
   int autoStep = 0;
 
@@ -47,9 +57,24 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
-    //System.out.println(drive.getPosition());
-    System.out.println(navx.getYaw());
+
+        //read values periodically
+    double x = tx.getDouble(0.0);
+    double y = ty.getDouble(0.0);
+    double area = ta.getDouble(0.0);
+
+        //post to smart dashboard periodically
+    SmartDashboard.putNumber("LimelightX", x);
+    SmartDashboard.putNumber("LimelightY", y);
+    SmartDashboard.putNumber("LimelightArea", area);
     
+        //System.out.println(drive.getPosition());
+    System.out.println(navx.getYaw());
+    System.out.println(tx.getDouble(0));
+    System.out.println(ty.getDouble(0));
+    System.out.println(ta.getDouble(0));
+
+
   }
 
   @Override
@@ -70,7 +95,7 @@ public class Robot extends TimedRobot {
         break;
 
       case "Right":
-      sideAuto(-45);
+        sideAuto(-45);
         break;
 
       case "Left":
@@ -83,7 +108,7 @@ public class Robot extends TimedRobot {
     }
 
   }
-
+// getLeftY is for the Y-axis of the left stick on the xbox controller, as is getRightX for the X-axis
   @Override
   public void teleopInit() {}
 
@@ -93,13 +118,15 @@ public class Robot extends TimedRobot {
 
     if (xbox.getAButton()) {
       coralMotor.set(ControlMode.PercentOutput, -0.35);
-    } else if(xbox.getBButton()){
+    } else if (xbox.getBButton()){
       coralMotor.set(ControlMode.PercentOutput, -0.6);
-    }else if(xbox.getYButton()){
+    } else if (xbox.getYButton()){
       coralMotor.set(ControlMode.PercentOutput, 1);
-
+    } else if (xbox.getRightBumperButton()) {
+      coralMotor.set(ControlMode.PercentOutput, -0.3);
+    
     } else {
-      coralMotor.set(ControlMode.PercentOutput, 0);
+      coralMotor.set(ControlMode.PercentOutput, 0); 
     }
 
   }
@@ -132,7 +159,7 @@ public class Robot extends TimedRobot {
       // Drive x feet, with angle adjustment
       case 0:
 
-        speed = 0.5;
+        speed = 0.8;
 
         turn = 0;
 

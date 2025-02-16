@@ -32,7 +32,7 @@ public class Drivetrain {
         
         resetEncoders();
         
-        SparkMaxConfig globalConfig= new SparkMaxConfig();
+        SparkMaxConfig globalConfig = new SparkMaxConfig();
         SparkMaxConfig rightLeaderConfig = new SparkMaxConfig();
         SparkMaxConfig leftFollowerConfig = new SparkMaxConfig();
         SparkMaxConfig rightFollowerConfig = new SparkMaxConfig();
